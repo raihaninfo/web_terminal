@@ -45,7 +45,7 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-
+	defer conn.Close()
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
@@ -69,10 +69,10 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 
 func ExecuteCommand(cmd string) (string, error) {
 	s := strings.Split(cmd, " ")
-	c, err := exec.Command(s[0], s[1:]...).Output()
-	if err != nil {
-		return "", err
-	}
+	c, _ := exec.Command(s[0], s[1:]...).Output()
+	// if err != nil {
+	// 	return "", err
+	// }
 
 	cString := string(c)
 	cString = strings.ReplaceAll(cString, "\n", "<br/>")

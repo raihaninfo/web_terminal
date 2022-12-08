@@ -2,7 +2,7 @@ let userInput, terminalOutput;
 let projAsk = false;
 let lastCommands = [];
 let socket = new WebSocket("ws://localhost:8080/ws");
-var serverResponse = "";
+var serverResponse;
 socket.onopen = function (e) {
   console.log("[open] Connection established");
   console.log("Sending to server");
@@ -10,12 +10,13 @@ socket.onopen = function (e) {
 socket.onmessage = function (event) {
   serverResponse = event.data;
   console.log(event.data);
-}
-
-// console.log(serverResponse);
-
-const COMMANDS = {
-  command1: `You can use <pre style="color:red">HTML, CSS, and JavaScript</tags> for commands! Try clicking on <h1 onclick="alert('hihi')">me<img src="https://media.giphy.com/media/3o7bu0ZQQp2QQQQQQQ/giphy.gif" alt="" width=50px height=50px></h1>`,
+};
+socket.onclose = function (event) {
+  if (event.wasClean) { 
+    console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+  } else {
+    console.log('[close] Connection died');
+  }
 };
 
 const app = () => {
@@ -37,22 +38,13 @@ const execute = function executeCommand(input) {
 
 
 
-  if (input == "projects") {
-    open("pages/projects.html");
-  } else if (input === "clear" || input === "cls") {
+  if (input === "clear" || input === "cls") {
     clearScreen();
   } else if (input === "history") {
     showHist();
-  } else if (input === "github") {
-    open("https://github.com/terminal-js");
   } else {
     output = `<div class="terminal-line"><span class="success">➜</span> <span class="directory">~</span> ${input}</div>`;
-    if (!COMMANDS.hasOwnProperty(input)) {
-      // output += `<div class="terminal-line">command not found: ${input}</div>`;
-      output += serverResponse;
-    } else {
-      output += COMMANDS[input];
-    }
+    output += serverResponse;
 
     terminalOutput.innerHTML = `${terminalOutput.innerHTML}<br><div class="terminal-line">${output}<br></div>`;
     terminalOutput.scrollTop = terminalOutput.scrollHeight;
