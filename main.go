@@ -29,7 +29,7 @@ func main() {
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("views/index.html")
+	t, err := template.ParseFiles("views/index.gohtml")
 	if err != nil {
 		log.Println(err)
 	}
