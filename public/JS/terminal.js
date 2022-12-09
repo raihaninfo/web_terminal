@@ -1,4 +1,5 @@
 let userInput, terminalOutput;
+let userInputMain
 let projAsk = false;
 let lastCommands = [];
 let socket = new WebSocket("ws://localhost:8080/ws");
@@ -9,14 +10,12 @@ socket.onopen = function (e) {
 };
 socket.onmessage = function (event) {
   serverResponse = event.data;
-  console.log(event.data);
+  displayOutput(userInputMain, serverResponse)
+  console.log(userInput.innerHTML);
+  console.log(serverResponse);
 };
 socket.onclose = function (event) {
-  if (event.wasClean) { 
-    console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-  } else {
-    console.log('[close] Connection died');
-  }
+  console.log("Connected Close");
 };
 
 const app = () => {
@@ -42,21 +41,25 @@ const execute = function executeCommand(input) {
     clearScreen();
   } else if (input === "history") {
     showHist();
-  } else {
-    output = `<div class="terminal-line"><span class="success">➜</span> <span class="directory">~</span> ${input}</div>`;
-    output += serverResponse;
-
-    terminalOutput.innerHTML = `${terminalOutput.innerHTML}<br><div class="terminal-line">${output}<br></div>`;
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
   }
 };
 
+function displayOutput(exData, newData) {
+  output = `<div class="terminal-line"><span class="success">➜</span> <span class="directory">~</span> ${exData}</div>`;
+  output += newData;
+
+  terminalOutput.innerHTML = `${terminalOutput.innerHTML}<br><div class="terminal-line">${output}<br></div>`;
+  terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
+
 const key = (e) => {
   const input = userInput.innerHTML;
+  userInputMain = input
+  execute(input);
 
   if (e.key === "Enter") {
     socket.send(input);
-    execute(input);
+    // execute(input);
     userInput.innerHTML = "";
     return;
   }
@@ -123,11 +126,9 @@ class Terminal extends HTMLElement {
       <div class="fakeButtons fakeZoom"></div>
     </div>
     <div class="fakeScreen">
-      <div class="terminal-window primary-bg" onclick="document.getElementById('dummyKeyboard').focus();">
+      <div class="terminal-window primary-bg">
         <div class="terminal-output" id="terminalOutput">
-          <div class="terminal-line">
-            <span class="help-msg">Type <span class="help">command1</span> to get started</span>
-              commands.<br>
+          <div class="terminal-line">Welcome To Web Terminal.<br>
           </div>
         </div>
         <div class="terminal-line">

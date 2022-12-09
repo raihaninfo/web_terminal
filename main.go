@@ -56,23 +56,27 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 		command, err := ExecuteCommand(string(p))
 		if err != nil {
 			log.Println(err)
-			return
+			if err := conn.WriteMessage(messageType, []byte(err.Error()+"<br/>")); err != nil {
+				log.Println(err)
+				return
+			}
+		} else {
+			if err := conn.WriteMessage(messageType, []byte(command)); err != nil {
+				log.Println(err)
+				return
+			}
 		}
 
-		if err := conn.WriteMessage(messageType, []byte(command)); err != nil {
-			log.Println(err)
-			return
-		}
 	}
 
 }
 
 func ExecuteCommand(cmd string) (string, error) {
 	s := strings.Split(cmd, " ")
-	c, _ := exec.Command(s[0], s[1:]...).Output()
-	// if err != nil {
-	// 	return "", err
-	// }
+	c, err := exec.Command(s[0], s[1:]...).Output()
+	if err != nil {
+		return "", err
+	}
 
 	cString := string(c)
 	cString = strings.ReplaceAll(cString, "\n", "<br/>")
