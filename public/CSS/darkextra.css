@@ -1,6 +1,6 @@
-* {
+/* * {
   animation: welcome_animation 1s ease-in-out 1;
-}
+} */
 .tooltiptext {
   visibility: hidden;
   opacity: 0;
