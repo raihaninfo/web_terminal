@@ -35,9 +35,7 @@ const execute = function executeCommand(input) {
     input = "sudo";
   }
 
-
-
-  if (input === "clear" || input === "cls") {
+  if (input === "clear") {
     clearScreen();
   } else if (input === "history") {
     showHist();
@@ -58,8 +56,12 @@ const key = (e) => {
   execute(input);
 
   if (e.key === "Enter") {
-    socket.send(input);
-    // execute(input);
+    if (input === "clear") {
+
+    } else {
+
+      socket.send(input);
+    }
     userInput.innerHTML = "";
     return;
   }
@@ -136,7 +138,7 @@ class Terminal extends HTMLElement {
           <span class="directory">~</span>
           <span class="user-input" id="userInput"></span>
           <span class="line anim-typewriter"></span>
-          <input type="text" id="keyboard" class="dummy-keyboard" />
+          <input type="text" autocomplete="off" id="keyboard" class="dummy-keyboard" />
         </div>
       </div>
     </div>
