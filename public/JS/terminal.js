@@ -12,7 +12,7 @@ socket.onmessage = function (event) {
   serverResponse = event.data;
   displayOutput(userInputMain, serverResponse)
   console.log(userInput.innerHTML);
-  console.log(serverResponse);
+  // console.log(serverResponse);
 };
 socket.onclose = function (event) {
   console.log("Connected Close");
@@ -112,6 +112,37 @@ document.addEventListener("keydown", backspace);
 document.addEventListener("keypress", key);
 document.addEventListener("DOMContentLoaded", app);
 
+// resize element height and width value
+
+// code run on load
+window.onload = function () {
+
+  document.getElementById("resizable").addEventListener("mousedown", startResize);
+  document.getElementById("resizable").addEventListener("mouseup", stopResize);
+
+  // select class
+  let terminalWindow = document.querySelector(".terminal-window");
+
+  function startResize(e) {
+    window.addEventListener("mousemove", resize);
+  }
+
+  function resize(e) {
+    document.getElementById("resizable").style.width = e.clientX + "px";
+    document.getElementById("resizable").style.height = e.clientY + "px";
+    var abc = e.clientX;
+    abc = parseInt(abc);
+    console.log(abc);
+    // abc convert to int
+    // terminalWindow.style.height = abc -500 + "px";
+
+  }
+
+  function stopResize(e) {
+    window.removeEventListener("mousemove", resize);
+  }
+
+}
 
 class Terminal extends HTMLElement {
   constructor() {
@@ -122,12 +153,20 @@ class Terminal extends HTMLElement {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/3f2db6afb6.js" crossorigin="anonymous"></script>
     <div class="terminal_window" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+
+    <style>
+    #resizable {
+      resize: both;
+      overflow: auto;
+    }
+  </style>
+    <div class="fakeScreen" id="resizable">
     <div class="fakeMenu">
-      <div class="fakeButtons fakeClose"></div>
-      <div class="fakeButtons fakeMinimize"></div>
-      <div class="fakeButtons fakeZoom"></div>
-    </div>
-    <div class="fakeScreen">
+    <div class="fakeButtons fakeClose"></div>
+    <div class="fakeButtons fakeMinimize"></div>
+    <div class="fakeButtons fakeZoom"></div>
+    <div class="abc">abc</div>
+  </div>
       <div class="terminal-window primary-bg">
         <div class="terminal-output" id="terminalOutput">
           <div class="terminal-line">Welcome To Web Terminal.<br>
@@ -146,5 +185,8 @@ class Terminal extends HTMLElement {
   `
   }
 }
+
+// 
+
 
 customElements.define("terminal-js", Terminal);

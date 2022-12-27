@@ -15,8 +15,6 @@ func ExecuteCommand(cmd string) (string, error) {
 	cString := string(c)
 	cString = strings.ReplaceAll(cString, " ", "&nbsp;")
 	cString = strings.ReplaceAll(cString, "\r", "")
-	// cString = strings.ReplaceAll(cString, "\t", "&nbsp;&nbsp;&nbsp;&nbsp;")
-	// cString = strings.ReplaceAll(cString, "\v", "&nbsp;&nbsp;&nbsp;&nbsp;")
 	cString = strings.ReplaceAll(cString, "\n", "<br/>")
 
 	return cString, nil
