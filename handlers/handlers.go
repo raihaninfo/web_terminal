@@ -24,35 +24,37 @@ func Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func Ws(w http.ResponseWriter, r *http.Request) {
-	// allow origin all
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+	// allow only localhost:8080 to connect
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return r.Host == "localhost:8080"
+	}
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	defer conn.Close()
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		command, err := helpers.ExecuteCommand(string(p))
-		if err != nil {
-			log.Println(err)
-			if err := conn.WriteMessage(messageType, []byte(err.Error()+"<br/>")); err != nil {
+	go func() {
+		for {
+			messageType, p, err := conn.ReadMessage()
+			if err != nil {
 				log.Println(err)
 				return
 			}
-		} else {
-			if err := conn.WriteMessage(messageType, []byte(command)); err != nil {
+			command, err := helpers.ExecuteCommand(string(p))
+			if err != nil {
 				log.Println(err)
-				return
+				if err := conn.WriteMessage(messageType, []byte(err.Error()+"<br/>")); err != nil {
+					log.Println(err)
+					return
+				}
+			} else {
+				if err := conn.WriteMessage(messageType, []byte(command)); err != nil {
+					log.Println(err)
+					return
+				}
 			}
 		}
-
-	}
+	}()
 
 }

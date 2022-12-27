@@ -11,8 +11,6 @@ socket.onopen = function (e) {
 socket.onmessage = function (event) {
   serverResponse = event.data;
   displayOutput(userInputMain, serverResponse)
-  console.log(userInput.innerHTML);
-  // console.log(serverResponse);
 };
 socket.onclose = function (event) {
   console.log("Connected Close");
@@ -94,7 +92,6 @@ const up = (e) => {
     }
   }
 
-
   if (e.key === "ArrowDown") {
     if (lastCommands.length > 0 && iter > 1) {
       iter -= 1;
@@ -112,16 +109,11 @@ document.addEventListener("keydown", backspace);
 document.addEventListener("keypress", key);
 document.addEventListener("DOMContentLoaded", app);
 
-// resize element height and width value
-
-// code run on load
+// code run after the page is loaded
 window.onload = function () {
 
   document.getElementById("resizable").addEventListener("mousedown", startResize);
   document.getElementById("resizable").addEventListener("mouseup", stopResize);
-
-  // select class
-  let terminalWindow = document.querySelector(".terminal-window");
 
   function startResize(e) {
     window.addEventListener("mousemove", resize);
@@ -130,12 +122,6 @@ window.onload = function () {
   function resize(e) {
     document.getElementById("resizable").style.width = e.clientX + "px";
     document.getElementById("resizable").style.height = e.clientY + "px";
-    var abc = e.clientX;
-    abc = parseInt(abc);
-    console.log(abc);
-    // abc convert to int
-    // terminalWindow.style.height = abc -500 + "px";
-
   }
 
   function stopResize(e) {
